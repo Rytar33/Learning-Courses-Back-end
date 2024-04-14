@@ -1,22 +1,29 @@
-﻿namespace Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace Domain;
+
+[Table("course")]
 public class Course : BaseEntity
 {
     public Course(
         string name,
         string description,
-        Guid? idAuthor) 
+        Guid? idUser) 
     {
         Name = name;
         Description = description;
-        IdAuthor = idAuthor;
+        IdUser = idUser;
     }
 
+    [Column("name")]
     public string Name { get; init; }
 
+    [Column("description")]
     public string Description { get; init; }
 
-    public Guid? IdAuthor { get; init; }
+    [Column("id_user")]
+    [ForeignKey(nameof(User))]
+    public Guid? IdUser { get; init; }
 
-    protected User? User { get; private init; }
+    public User? User { get; private init; }
 }

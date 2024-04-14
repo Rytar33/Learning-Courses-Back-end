@@ -1,8 +1,11 @@
-﻿namespace Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public class Raiting : BaseEntity
+namespace Domain;
+
+[Table("rating")]
+public class Rating : BaseEntity
 {
-    public Raiting(
+    public Rating(
         Guid idCourse,
         Guid idUser,
         short quantityScore,
@@ -14,15 +17,21 @@ public class Raiting : BaseEntity
         Comment = comment;
     }
 
+    [Column("id_course")]
+    [ForeignKey(nameof(Course))]
     public Guid IdCourse { get; init; }
 
-    protected Course Course { get; init; }
+    public Course Course { get; private init; }
 
+    [Column("id_user")]
+    [ForeignKey(nameof(User))]
     public Guid IdUser { get; init; }
 
-    protected User User { get; init; }
+    public User User { get; private init; }
 
+    [Column("quantity_score")]
     public short QuantityScore { get; init; }
 
+    [Column("comment")]
     public string? Comment { get; init; }
 }

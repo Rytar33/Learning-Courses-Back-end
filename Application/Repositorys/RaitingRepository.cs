@@ -12,20 +12,20 @@ public class RaitingRepository : IRaitingRepository
 
     private LearningCourseDataBaseContext _dbContext;
 
-    public Task<IEnumerable<Raiting>> GetAll()
-        => Task.FromResult(_dbContext.Raiting.AsNoTracking().AsEnumerable());
+    public Task<IEnumerable<Rating>> GetAll()
+        => Task.FromResult(_dbContext.Rating.AsNoTracking().AsEnumerable());
 
-    public async Task<Raiting> GetByIdAsync(Guid id)
-        => await _dbContext.Raiting.FindAsync(id);
+    public async Task<Rating> GetByIdAsync(Guid id)
+        => await _dbContext.Rating.FindAsync(id);
 
-    public async Task AddAsync(Raiting raiting)
-        => await _dbContext.Raiting.AddAsync(raiting);
+    public async Task AddAsync(Rating rating)
+        => await _dbContext.Rating.AddAsync(rating);
 
-    public Task Update(Raiting raiting)
-        => Task.FromResult(_dbContext.Raiting.Update(raiting));
+    public Task Update(Rating rating)
+        => Task.FromResult(_dbContext.Rating.Update(rating));
 
-    public Task Delete(Raiting raiting)
-        => Task.FromResult(_dbContext.Raiting.Remove(raiting));
+    public Task Delete(Rating rating)
+        => Task.FromResult(_dbContext.Rating.Remove(rating));
 
     public async Task SaveChangesAsync()
         => await _dbContext.SaveChangesAsync();

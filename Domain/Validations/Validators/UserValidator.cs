@@ -1,6 +1,8 @@
-﻿namespace Domain.Validations.Validators;
+﻿using FluentValidation;
 
-public class UserValidator
+namespace Domain.Validations.Validators;
+
+public class UserValidator : AbstractValidator<User>
 {
     public UserValidator()
     {

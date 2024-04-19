@@ -1,6 +1,8 @@
-﻿namespace Domain.Validations.Validators;
+﻿using FluentValidation;
 
-public class SubscriptionValidator
+namespace Domain.Validations.Validators;
+
+public class SubscriptionValidator : AbstractValidator<Subscription>
 {
     public SubscriptionValidator()
     {

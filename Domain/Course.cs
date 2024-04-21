@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Validations.Validators;
 
 namespace Domain;
 
@@ -13,6 +14,7 @@ public class Course : BaseEntity
         Name = name;
         Description = description;
         IdUser = idUser;
+        new CourseValidator().Validate(this);
     }
 
     [Column("name")]

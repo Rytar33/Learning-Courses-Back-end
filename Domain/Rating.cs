@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Validations.Validators;
 
 namespace Domain;
 
@@ -8,13 +9,14 @@ public class Rating : BaseEntity
     public Rating(
         Guid idCourse,
         Guid idUser,
-        short quantityScore,
+        int quantityScore,
         string? comment = null) 
     {
         IdCourse = idCourse;
         IdUser = idUser;
         QuantityScore = quantityScore;
         Comment = comment;
+        new RatingValidator().Validate(this);
     }
 
     [Column("id_course")]
@@ -30,7 +32,7 @@ public class Rating : BaseEntity
     public User User { get; private init; }
 
     [Column("quantity_score")]
-    public short QuantityScore { get; init; }
+    public int QuantityScore { get; init; }
 
     [Column("comment")]
     public string? Comment { get; init; }

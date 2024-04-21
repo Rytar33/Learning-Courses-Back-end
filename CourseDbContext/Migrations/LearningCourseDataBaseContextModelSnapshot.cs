@@ -70,7 +70,7 @@ namespace CourseDbContext.Migrations
                         .HasColumnName("id_user");
 
                     b.Property<short>("QuantityScore")
-                        .HasColumnType("smallint")
+                        .HasColumnType("int")
                         .HasColumnName("quantity_score");
 
                     b.HasKey("Id");

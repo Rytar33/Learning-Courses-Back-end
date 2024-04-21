@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Validations.Validators;
 
 namespace Domain;
 
@@ -15,6 +16,7 @@ public class Subscription : BaseEntity
         IdCourse = idCourse;
         DateTimePayment = dateTimePayment;
         DateTimeEndSubscription = dateTimeEndSubscription;
+        new SubscriptionValidator().Validate(this);
     }
 
     [Column("id_user")]

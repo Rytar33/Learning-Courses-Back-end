@@ -55,7 +55,7 @@ namespace CourseDbContext.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     id_course = table.Column<Guid>(type: "uuid", nullable: false),
                     id_user = table.Column<Guid>(type: "uuid", nullable: false),
-                    quantity_score = table.Column<short>(type: "smallint", nullable: false),
+                    quantity_score = table.Column<int>(type: "int", nullable: false),
                     comment = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>

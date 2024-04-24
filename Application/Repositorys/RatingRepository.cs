@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Repositorys;
 
-public class RaitingRepository : IRaitingRepository
+public class RatingRepository : IRatingRepository
 {
-    public RaitingRepository()
+    public RatingRepository()
         => _dbContext = new LearningCourseDataBaseContext();
 
     private LearningCourseDataBaseContext _dbContext;

@@ -2,7 +2,7 @@
 
 namespace Application.Interfaces.Repositorys;
 
-public interface IRaitingRepository : IRepository<Rating>
+public interface IRatingRepository : IRepository<Rating>
 {
 
 }

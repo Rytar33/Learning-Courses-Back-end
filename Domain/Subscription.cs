@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Validations;
 using Domain.Validations.Validators;
 using FluentValidation;
 
@@ -17,7 +18,7 @@ public class Subscription : BaseEntity
         IdCourse = idCourse;
         DateTimePayment = dateTimePayment;
         DateTimeEndSubscription = dateTimeEndSubscription;
-        new SubscriptionValidator().Validate(this);
+        new SubscriptionValidator().ValidateWithErrors(this);
     }
 
     [Column("id_user")]
@@ -53,7 +54,7 @@ public class Subscription : BaseEntity
                 throw new ValidationException("Время окончание подписки не должно быть раньше текущей");
             DateTimeEndSubscription = dateTimeEndSubscription.Value;
         }
-        new SubscriptionValidator().Validate(this);
+        new SubscriptionValidator().ValidateWithErrors(this);
         return this;
     }
 }

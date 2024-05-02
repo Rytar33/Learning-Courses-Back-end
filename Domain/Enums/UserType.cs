@@ -2,7 +2,7 @@
 
 namespace Domain.Enums;
 
-[JsonConverter(typeof(string))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum UserType
 {
     BaseUser = 0,

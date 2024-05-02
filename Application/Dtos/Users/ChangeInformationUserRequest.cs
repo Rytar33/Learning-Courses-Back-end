@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace Application.Dtos.Users;
 
 public class ChangeInformationUserRequest

@@ -38,6 +38,10 @@ namespace CourseDbContext.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id_user");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -69,8 +73,8 @@ namespace CourseDbContext.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id_user");
 
-                    b.Property<short>("QuantityScore")
-                        .HasColumnType("int")
+                    b.Property<int>("QuantityScore")
+                        .HasColumnType("integer")
                         .HasColumnName("quantity_score");
 
                     b.HasKey("Id");

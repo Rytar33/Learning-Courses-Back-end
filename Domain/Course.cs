@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Validations;
 using Domain.Validations.Validators;
 
 namespace Domain;
@@ -14,7 +15,7 @@ public class Course : BaseEntity
         Name = name;
         Description = description;
         IdUser = idUser;
-        new CourseValidator().Validate(this);
+        new CourseValidator().ValidateWithErrors(this);
     }
 
     [Column("name")]
@@ -29,10 +30,14 @@ public class Course : BaseEntity
 
     public User? User { get; private init; }
 
+    [Column("is_active")]
+    public bool IsActive { get; private set; } = false;
+    
     public Course Update(
         string? name = null,
         string? description = null,
-        Guid? idUser = null)
+        Guid? idUser = null,
+        bool? isActive = null)
     {
         if (name != null)
             Name = name;
@@ -40,7 +45,9 @@ public class Course : BaseEntity
             Description = description;
         if (idUser != null)
             IdUser = idUser;
-        new CourseValidator().Validate(this);
+        if (isActive != null)
+            IsActive = isActive.Value;
+        new CourseValidator().ValidateWithErrors(this);
         return this;
     }
 }

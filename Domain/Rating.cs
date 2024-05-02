@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Validations;
 using Domain.Validations.Validators;
 
 namespace Domain;
@@ -16,7 +17,7 @@ public class Rating : BaseEntity
         IdUser = idUser;
         QuantityScore = quantityScore;
         Comment = comment;
-        new RatingValidator().Validate(this);
+        new RatingValidator().ValidateWithErrors(this);
     }
 
     [Column("id_course")]
@@ -51,7 +52,7 @@ public class Rating : BaseEntity
             QuantityScore = quantityScore.Value;
         if (comment != null)
             Comment = comment;
-        new RatingValidator().Validate(this);
+        new RatingValidator().ValidateWithErrors(this);
         return this;
     }
 }

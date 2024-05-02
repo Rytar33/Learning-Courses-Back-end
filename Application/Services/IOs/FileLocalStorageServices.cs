@@ -1,9 +1,8 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.IOs;
 
-public class ImageServices
+public static class FileLocalStorageServices
 {
     public static async Task ImportManyFile(string dirPath, ICollection<IFormFile> files)
     {
@@ -12,7 +11,7 @@ public class ImageServices
     }
     public static async Task ImportSingleFile(string dirPath, IFormFile file)
     {
-        if (file.Length > 0 && (file.FileName.Contains(".jpg") || file.FileName.Contains(".png") || file.FileName.Contains(".bmp")))
+        if (file.Length > 0)
         {
             var dirPathInfo = new DirectoryInfo(dirPath);
             if (!dirPathInfo.Exists) dirPathInfo.Create();
@@ -33,7 +32,7 @@ public class ImageServices
         }
     }
 
-    public static string? ExportFullPathImage(string dirPath)
+    public static string? ExportFullPathFile(string dirPath)
     {
         var dirInfo = new DirectoryInfo(dirPath);
         string? fullPath = null;
@@ -42,7 +41,7 @@ public class ImageServices
         if (fullPath != null) fullPath = GetPathForWeb(dirInfo, Path.GetFileName(fullPath));
         return fullPath;
     }
-    public static string[] ExportFullPathsImage(string dirPath)
+    public static string[] ExportFullPathsFile(string dirPath)
     {
         var fullPaths = new List<string>();
         var dirInfo = new DirectoryInfo(dirPath);
@@ -50,9 +49,6 @@ public class ImageServices
             fullPaths.AddRange(
                 Directory
                     .GetFiles(dirInfo.FullName)
-                    .Where(f => f.Contains(".jpg") 
-                                || f.Contains(".png") 
-                                || f.Contains(".bmp"))
                     .Select(i => GetPathForWeb(dirInfo, Path.GetFileName(i))));
         return fullPaths.ToArray();
     }

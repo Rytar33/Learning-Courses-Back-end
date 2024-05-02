@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Enums;
+using Domain.Validations;
 using Domain.Validations.Validators;
 
 namespace Domain;
@@ -23,7 +24,7 @@ public class User : BaseEntity
         NumberPhone = numberPhone;
         UserType = userType;
         DateTimeRegistration = dateTimeRegistration;
-        new UserValidator().Validate(this);
+        new UserValidator().ValidateWithErrors(this);
     }
 
     [Column("user_name")]
@@ -67,7 +68,7 @@ public class User : BaseEntity
             NumberPhone = numberPhone;
         if (userType != null)
             UserType = userType.Value;
-        new UserValidator().Validate(this);
+        new UserValidator().ValidateWithErrors(this);
         return this;
     }
 }

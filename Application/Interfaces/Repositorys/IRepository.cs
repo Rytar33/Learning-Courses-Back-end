@@ -6,7 +6,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
 {
     Task<IEnumerable<TEntity>> GetAll();
 
-    Task<TEntity> GetByIdAsync(Guid id);
+    Task<TEntity?> GetByIdAsync(Guid id);
 
     Task AddAsync(TEntity entity);
 

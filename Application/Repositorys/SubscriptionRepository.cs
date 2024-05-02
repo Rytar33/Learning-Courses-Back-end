@@ -1,9 +1,4 @@
-﻿using Application.Interfaces.Repositorys;
-using CourseDbContext;
-using Domain;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Repositorys;
+﻿namespace Application.Repositorys;
 
 public class SubscriptionRepository : ISubscriptionRepository
 {
@@ -15,7 +10,7 @@ public class SubscriptionRepository : ISubscriptionRepository
     public Task<IEnumerable<Subscription>> GetAll()
         => Task.FromResult(_dbContext.Subscription.AsNoTracking().AsEnumerable());
 
-    public async Task<Subscription> GetByIdAsync(Guid id)
+    public async Task<Subscription?> GetByIdAsync(Guid id)
         => await _dbContext.Subscription.FindAsync(id);
 
     public async Task AddAsync(Subscription subscription)

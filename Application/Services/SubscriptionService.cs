@@ -1,51 +1,65 @@
 using Application.Dtos.Subscriptions;
-using Application.Interfaces.Repositorys;
-using Application.Repositorys;
-using CourseDbContext;
-using Domain;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
 
-public class SubscriptionService
+public class SubscriptionService : ISubscriptionService
 {
-    public SubscriptionService()
-        => _subscriptionRepository = new SubscriptionRepository();
+    public SubscriptionService(ISubscriptionRepository subscriptionRepository)
+        => _subscriptionRepository = subscriptionRepository;
 
     private readonly ISubscriptionRepository _subscriptionRepository;
 
-    public async Task Subscribe(SubscribeRequest subscribeRequest)
+    public async Task<IResult> Subscribe(SubscribeRequest subscribeRequest)
     {
         await using var db = new LearningCourseDataBaseContext();
         if (!await db.User.AnyAsync(u => u.Id == subscribeRequest.IdUser))
-            throw new ValidationException("Такого пользователя не существует");
+            return Results.NotFound("Такого пользователя не существует");
         if (!await db.Course.AnyAsync(c => c.Id == subscribeRequest.IdCourse))
-            throw new ValidationException("Такого курса не существует");
+            return Results.NotFound("Такого курса не существует");
         if (await db.Subscription.AnyAsync(s =>
                 s.IdUser == subscribeRequest.IdUser
                 && s.IdCourse == subscribeRequest.IdCourse
                 && s.DateTimeEndSubscription > DateTime.UtcNow))
-            throw new ValidationException("У вас уже есть текущая не завершенная подписка");
-        await _subscriptionRepository.AddAsync(
-            new Subscription(
+            return Results.BadRequest("У вас уже есть текущая не завершенная подписка");
+        if (await db.Course.AnyAsync(c => c.Id == subscribeRequest.IdCourse && !c.IsActive))
+            return Results.BadRequest("Данный курс не активен, и на него нельзя подписаться");
+        try
+        {
+            var subscription = new Subscription(
                 subscribeRequest.IdUser,
                 subscribeRequest.IdCourse,
                 DateTime.UtcNow,
-                subscribeRequest.DateTimeEndSubscription));
-        await _subscriptionRepository.SaveChangesAsync();
+                subscribeRequest.DateTimeEndSubscription);
+            await _subscriptionRepository.AddAsync(subscription);
+            await _subscriptionRepository.SaveChangesAsync();
+            return Results.Created($"api/v1/Subscription/{subscription.Id}", subscription);
+        }
+        catch (ValidationException validationException)
+        {
+            return Results.BadRequest(validationException.Errors);
+        }
     }
 
-    public async Task ExtendSubscription(ExtendSubscriptionRequest extendSubscriptionRequest)
+    public async Task<IResult> ExtendSubscription(ExtendSubscriptionRequest extendSubscriptionRequest)
     {
         await using var db = new LearningCourseDataBaseContext();
         var userSubscriptionCourseLast = await db.Subscription
             .AsNoTracking()
             .LastOrDefaultAsync(s => 
                 s.IdUser == extendSubscriptionRequest.IdUser
-                & s.IdCourse == extendSubscriptionRequest.IdCourse) 
-                                         ?? throw new ValidationException("Пользователь не подписан на курс");
-        userSubscriptionCourseLast.Update(dateTimeEndSubscription: extendSubscriptionRequest.DateTimeExtend);
-        await _subscriptionRepository.SaveChangesAsync();
+                && s.IdCourse == extendSubscriptionRequest.IdCourse
+                && DateTime.UtcNow < s.DateTimeEndSubscription);
+        if (userSubscriptionCourseLast == null)
+            return Results.BadRequest("Пользователь не подписан на курс");
+        try
+        {
+            userSubscriptionCourseLast.Update(dateTimeEndSubscription: extendSubscriptionRequest.DateTimeExtend);
+            await _subscriptionRepository.SaveChangesAsync();
+            return Results.NoContent();
+        }
+        catch (ValidationException validationException)
+        {
+            return Results.BadRequest(validationException.Errors);
+        }
     }
 }

@@ -8,11 +8,13 @@ public class CourseListItem
     
     public string Description { get; init; }
     
-    public string PathImage { get; init; }
+    public string? PathImage { get; init; }
     
     public Guid? IdUserAuthor { get; init; }
     
     public string? UserName { get; init; }
     
     public float AverageScore { get; init; }
+    
+    public bool IsActive { get; init; }
 }

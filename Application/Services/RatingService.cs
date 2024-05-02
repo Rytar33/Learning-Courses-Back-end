@@ -1,40 +1,53 @@
 using Application.Dtos.Ratings;
-using Application.Interfaces.Repositorys;
-using Application.Repositorys;
-using CourseDbContext;
-using Domain;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
 
-public class RatingService
+public class RatingService : IRatingService
 {
-    public RatingService()
-        => _ratingRepository = new RatingRepository();
+    public RatingService(IRatingRepository ratingRepository)
+        => _ratingRepository = ratingRepository;
 
     private readonly IRatingRepository _ratingRepository;
 
-    public async Task SendRatingForCourse(SendRatingRequest sendRatingRequest)
+    public async Task<IResult> SendRatingForCourse(SendRatingRequest sendRatingRequest)
     {
         await using var db = new LearningCourseDataBaseContext();
         if (!await db.User.AnyAsync(u => u.Id == sendRatingRequest.IdUser))
-            throw new ValidationException("Пользователя не было найденно");
+            return Results.NotFound("Пользователя не было найденно");
         if (!await db.Course.AnyAsync(c => c.Id == sendRatingRequest.IdCourse))
-            throw new ValidationException("Курс не был найден");
+            return Results.NotFound("Курс не был найден");
         if (!await db.Subscription.AnyAsync(s => 
                 s.IdUser == sendRatingRequest.IdUser
                 & s.IdCourse == sendRatingRequest.IdCourse))
-            throw new ValidationException("На курс пользователь не был подписан");
+            return Results.BadRequest("На курс пользователь не был подписан");
         if (await db.Rating.AnyAsync(r =>
                 r.IdUser == sendRatingRequest.IdUser
                 & r.IdCourse == sendRatingRequest.IdCourse))
-            throw new ValidationException("Отзыв уже поставлен на этот курс");
-        await _ratingRepository.AddAsync(new Rating(
-            sendRatingRequest.IdCourse,
-            sendRatingRequest.IdUser,
-            sendRatingRequest.QuantityScore,
-            sendRatingRequest.Comment));
+            return Results.BadRequest("Отзыв уже поставлен на этот курс");
+        try
+        {
+            var rating = new Rating(
+                sendRatingRequest.IdCourse,
+                sendRatingRequest.IdUser,
+                sendRatingRequest.QuantityScore,
+                sendRatingRequest.Comment);
+            await _ratingRepository.AddAsync(rating);
+            await _ratingRepository.SaveChangesAsync();
+            return Results.Created();
+        }
+        catch (ValidationException validationException)
+        {
+            return Results.BadRequest(validationException.Errors);
+        }
+    }
+
+    public async Task<IResult> Remove(Guid idRating)
+    {
+        var rating = await _ratingRepository.GetByIdAsync(idRating);
+        if (rating == null)
+            return Results.NotFound("Данного курса не было найденно");
+        await _ratingRepository.Delete(rating);
         await _ratingRepository.SaveChangesAsync();
+        return Results.NoContent();
     }
 }

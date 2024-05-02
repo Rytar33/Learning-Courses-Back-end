@@ -17,7 +17,7 @@ public class UserValidator : AbstractValidator<User>
             .Matches(RegexPattern.NumberPhoneRegex).WithMessage(ErrorMessage.IncorrectNumberPhone);
 
         RuleFor(u => u.DateTimeRegistration)
-            .GreaterThan(DateTime.UtcNow).WithMessage(ErrorMessage.FutureDate);
+            .LessThan(DateTime.UtcNow).WithMessage(ErrorMessage.FutureDate);
 
         RuleFor(u => u.UserName)
             .MinimumLength(4).MaximumLength(20)

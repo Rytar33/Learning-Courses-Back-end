@@ -1,9 +1,4 @@
-﻿using Application.Interfaces.Repositorys;
-using CourseDbContext;
-using Domain;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Repositorys;
+﻿namespace Application.Repositorys;
 
 public class RatingRepository : IRatingRepository
 {
@@ -15,7 +10,7 @@ public class RatingRepository : IRatingRepository
     public Task<IEnumerable<Rating>> GetAll()
         => Task.FromResult(_dbContext.Rating.AsNoTracking().AsEnumerable());
 
-    public async Task<Rating> GetByIdAsync(Guid id)
+    public async Task<Rating?> GetByIdAsync(Guid id)
         => await _dbContext.Rating.FindAsync(id);
 
     public async Task AddAsync(Rating rating)

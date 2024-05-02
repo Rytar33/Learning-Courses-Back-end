@@ -1,9 +1,4 @@
-﻿using Application.Interfaces.Repositorys;
-using CourseDbContext;
-using Domain;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Repositorys;
+﻿namespace Application.Repositorys;
 
 public class CourseRepository : ICourseRepository
 {
@@ -15,7 +10,7 @@ public class CourseRepository : ICourseRepository
     public Task<IEnumerable<Course>> GetAll()
         => Task.FromResult(_dbContext.Course.AsNoTracking().AsEnumerable());
 
-    public async Task<Course> GetByIdAsync(Guid id)
+    public async Task<Course?> GetByIdAsync(Guid id)
         => await _dbContext.Course.FindAsync(id);
 
     public async Task AddAsync(Course course)

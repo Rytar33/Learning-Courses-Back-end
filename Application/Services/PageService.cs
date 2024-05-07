@@ -72,7 +72,7 @@ public static class PageService
             Items = subscriptionItems.Select(s =>
             {
                 using var db = new LearningCourseDataBaseContext();
-                var user = db.User.FirstAsync().GetAwaiter().GetResult();
+                var user = db.User.FirstAsync(u => u.Id == s.IdUser).GetAwaiter().GetResult();
                 var course = db.Course.FirstAsync(c => c.Id == s.IdCourse).GetAwaiter().GetResult();
                 return new SubscriptionListItem
                 {

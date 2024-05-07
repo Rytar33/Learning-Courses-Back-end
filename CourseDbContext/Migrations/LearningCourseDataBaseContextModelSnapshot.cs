@@ -162,6 +162,19 @@ namespace CourseDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("user");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4f1be005-4b17-41f3-b3fb-d7419750523c"),
+                            DateTimeRegistration = new DateTime(2024, 5, 7, 9, 5, 52, 747, DateTimeKind.Utc).AddTicks(1181),
+                            Email = "oleg.maionezov@gmail.com",
+                            FullName = "Олег Майонезов Степанович",
+                            NumberPhone = "+37377712345",
+                            Password = "DAAAD6E5604E8E17BD9F108D91E26AFE6281DAC8FDA0091040A7A6D7BD9B43B5",
+                            UserName = "Oleg",
+                            UserType = "Administrator"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Course", b =>

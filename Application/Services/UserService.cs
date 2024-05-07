@@ -5,6 +5,7 @@ using Application.Dtos.Pages;
 using Application.Dtos.Ratings;
 using Application.Dtos.Subscriptions;
 using Application.Dtos.Users;
+using Domain.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
@@ -32,7 +33,7 @@ public class UserService : IUserService
                 registrationUserRequest.UserName,
                 registrationUserRequest.Email,
                 registrationUserRequest.FullName,
-                registrationUserRequest.Password,
+                registrationUserRequest.Password.GetSha256(),
                 registrationUserRequest.NumberPhone,
                 UserType.BaseUser,
                 DateTime.UtcNow);
@@ -52,7 +53,7 @@ public class UserService : IUserService
         await using var db = new LearningCourseDataBaseContext();
         var user = await db.User.AsNoTracking().FirstOrDefaultAsync(u =>
             (u.Email == logInUserRequest.EmailOrName || u.UserName == logInUserRequest.EmailOrName)
-            && u.Password == logInUserRequest.Password);
+            && u.Password == logInUserRequest.Password.GetSha256());
         if (user == null)
             return Results.BadRequest("Неверно введён логин, почта и/или пароль");
         
@@ -67,7 +68,12 @@ public class UserService : IUserService
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes("You think there was going to be a secret key in here? But it was me! DIO!")),
                 SecurityAlgorithms.HmacSha256));
-        return Results.Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+        return Results.Ok(
+            new LogInUserResponse
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(jwt),
+                IdUser = user.Id
+            });
     }
 
     public async Task<IResult> ChangeInformation(ChangeInformationUserRequest changeInformationUserRequest)
@@ -78,6 +84,7 @@ public class UserService : IUserService
         try
         {
             user.Update(changeInformationUserRequest.UserName);
+            await _userRepository.Update(user);
             await _userRepository.SaveChangesAsync();
             if (changeInformationUserRequest.Image != null)
                 await FileLocalStorageServices.ImportSingleFile(
@@ -97,6 +104,7 @@ public class UserService : IUserService
         if (user == null)
             return Results.NotFound("Данного пользователя не было найденно");
         user.Update(userType: UserType.Blocked);
+        await _userRepository.Update(user);
         await _userRepository.SaveChangesAsync();
         return Results.NoContent();
     }

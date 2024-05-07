@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.Enums;
+using Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -18,8 +19,8 @@ public class LearningCourseDataBaseContext : DbContext
     public LearningCourseDataBaseContext()
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        Database.EnsureCreated();
     }
-    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(
@@ -28,7 +29,21 @@ public class LearningCourseDataBaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>();
+        modelBuilder.Entity<User>()
+            .HasData(new List<User>
+            {
+                new User(
+                    "Oleg",
+                    "oleg.maionezov@gmail.com", 
+                    "Олег Майонезов Степанович", 
+                    "qwerty123".GetSha256(), 
+                    "+37377712345", 
+                    UserType.Administrator, 
+                    DateTime.UtcNow)
+                {
+                    Id = Guid.NewGuid()
+                }
+            });
         modelBuilder.Entity<Course>();
         modelBuilder.Entity<Rating>();
         modelBuilder.Entity<Subscription>();

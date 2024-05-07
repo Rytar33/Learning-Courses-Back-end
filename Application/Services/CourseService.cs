@@ -43,8 +43,9 @@ public class CourseService : ICourseService
     {
         var course = await _courseRepository.GetByIdAsync(changeStatusCourseRequest.IdCourse);
         if (course == null)
-            return Results.NotFound("Данного пользователя не было найдено");
+            return Results.NotFound("Данного курса не было найдено");
         course.Update(isActive: changeStatusCourseRequest.IsActive);
+        await _courseRepository.Update(course);
         await _courseRepository.SaveChangesAsync();
         return Results.NoContent();
     }

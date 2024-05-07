@@ -24,7 +24,7 @@ public class LearningCourseDataBaseContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(
-            "Host=localhost;Port=5432;Database=learning_course;Username=postgres;Password=postgres");
+            "Host=dpg-cot02oi1hbls73asg9r0-a;Port=5432;Database=learning_course;Username=learning_course_user;Password=dOIK5dYE9Kw4CsUAN1Jr0QUEnIijRPkl");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
